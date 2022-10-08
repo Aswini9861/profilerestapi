@@ -2,8 +2,10 @@ from urllib.request import Request
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from profile_api import serializers
+from profile_api import models, serializers
 from rest_framework import viewsets
+from rest_framework.authentication import TokenAuthentication
+from profile_api import permissions
 
 class HelloApiView(APIView):
     '''Test API views'''
@@ -87,13 +89,20 @@ class helloviewset(viewsets.ViewSet):
         """Handle update object by its ID"""
         return Response({'http_method':'PUT'})
 
-    def partial_update(self,requesr,pk=None):
+    def partial_update(self,request,pk=None):
         """Handle partial object by its object"""
         return Response({"http_method":'PATCH'})
 
     def destroy(self,request,pk=None):
         """Handle removing an object"""
         return Response({'http_method':"DELETE"})
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    '''handle creating and updating profiles'''
+    serializer_class=serializers.Userprofileserialiizer
+    queryset=models.UserProfile.objects.all()
+    authentication_classes=(TokenAuthentication,)
+    permission_classes=(permissions.Updateownprofile,)
 
 
 
